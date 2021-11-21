@@ -4,7 +4,7 @@ A projet to evaluate if response compression would improve the performance when 
 
 ### Conclusion
 
-The performance are worst when compressing the response. See the first-test-result.txt to see the k6 test result.
+The performance are worst when compressing the response.
 
 ## Databse
 
