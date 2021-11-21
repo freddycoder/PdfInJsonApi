@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "682e5890-f7f0-4053-90bb-5ed2ce901386",
+		"name": "Response compression",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List pdf",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains pdfs metadata\", () => {\r",
+							"    var json = pm.response.json();\r",
+							"    pm.expect(json.length, \"Length must be greater that 0\").to.be.greaterThan(0);\r",
+							"    pm.collectionVariables.set(\"pdfId\", json[0].id);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5280/Pdf",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5280",
+					"path": [
+						"Pdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sans compression",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5280/Pdf/{{pdfId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5280",
+					"path": [
+						"Pdf",
+						"{{pdfId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Avec compression",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "text/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5280/Pdf/{{pdfId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5280",
+					"path": [
+						"Pdf",
+						"{{pdfId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "pdfId",
+			"value": ""
+		}
+	]
+}
