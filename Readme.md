@@ -22,6 +22,16 @@ To insert a bunch of pdf into the database, you need to run will the api is runn
 .\insert-test-data.ps1
 ```
 
+## Run k6 script
+
+To run k6 test, go into the k6 directory and run the script you want
+
+```
+k6 run .\script-avec-compression.js
+k6 run .\script-metadata-and-stream.js
+k6 run .\script-sans-compression.js
+```
+
 ## Migrations
 
 The database schema is manage using entity framework code first.

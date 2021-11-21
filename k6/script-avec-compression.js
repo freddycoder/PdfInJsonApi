@@ -4,7 +4,7 @@ import http from 'k6/http';
 export let options = {
   stages: [
     { target: 2, duration: '2s' },
-    { target: 2, duration: '300s' },
+    { target: 2, duration: '20s' },
     { target: 0, duration: '2s' }
   ],
 };
@@ -12,7 +12,7 @@ export let options = {
 var url = "http://localhost:5280/Pdf";
 
 export function setup () {
-    return http.get(url).json();
+    return http.get(url + "/?pageSize=100").json();
 }
 
 export default function (data) {
@@ -25,6 +25,7 @@ export default function (data) {
 
         check(res, {
             "status is 200": (r) => r.status == 200,
+            "content is gzip": (r) => r.headers['Content-Encoding'] == "gzip"
         });
     }
 }

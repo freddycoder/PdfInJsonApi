@@ -19,8 +19,13 @@
 							"pm.test(\"Response body contains pdfs metadata\", () => {\r",
 							"    var json = pm.response.json();\r",
 							"    pm.expect(json.length, \"Length must be greater that 0\").to.be.greaterThan(0);\r",
-							"    pm.collectionVariables.set(\"pdfId\", json[0].id);\r",
-							"})"
+							"    pm.collectionVariables.set(\"pdfId\", json[Math.floor((Math.random() * 1000) % json.length)].id);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"No compression\", () => {\r",
+							"    pm.expect(pm.response.headers.has(\"Content-Encoding\"), \"There is no Content-Encoding headers\").to.be.false;\r",
+							"});\r",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -51,6 +56,24 @@
 		},
 		{
 			"name": "Sans compression",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"No compression\", () => {\r",
+							"    pm.expect(pm.response.headers.has(\"Content-Encoding\"), \"There is no Content-Encoding headers\").to.be.false;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true,
@@ -77,6 +100,23 @@
 		},
 		{
 			"name": "Avec compression",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Compression enable\", () => {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Encoding\"), \"Content-Encoding is gzip\").to.eq(\"gzip\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept-encoding": true,
@@ -112,6 +152,131 @@
 					"path": [
 						"Pdf",
 						"{{pdfId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sans compression - Pdf stream Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No compression\", () => {\r",
+							"    pm.expect(pm.response.headers.has(\"Content-Encoding\"), \"There is no Content-Encoding headers\").to.be.false;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "text/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5280/Pdf/{{pdfId}}/stream",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5280",
+					"path": [
+						"Pdf",
+						"{{pdfId}}",
+						"stream"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Avec compression - Pdf stream",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Compression enable\", () => {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Encoding\"), \"Content-Encoding is gzip\").to.eq(\"gzip\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true,
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "text/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5280/Pdf/{{pdfId}}/stream",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5280",
+					"path": [
+						"Pdf",
+						"{{pdfId}}",
+						"stream"
 					]
 				}
 			},

@@ -17,9 +17,14 @@ export function setup () {
 
 export default function (data) {
     for (var i = 0; i < data.length; i++) {
-        var res = http.get(url + "/" + data[i].id);
+        var resMetadata = http.get(url + "/" + data[i].id + "/metadata");
+        var resStream = http.get(url + "/" + resMetadata.json().id + "/stream");
 
-        check(res, {
+        check(resMetadata, {
+            "status is 200": (r) => r.status == 200,
+            "content is not gzip": (r) => r.headers['Content-Encoding'] == undefined
+        });
+        check(resStream, {
             "status is 200": (r) => r.status == 200,
             "content is not gzip": (r) => r.headers['Content-Encoding'] == undefined
         });
