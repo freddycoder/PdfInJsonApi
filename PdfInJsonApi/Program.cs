@@ -66,7 +66,9 @@ public class Startup
             options.Level = CompressionLevel.Fastest;
         });
 
-        services.AddResponseCompression();
+        services.AddResponseCompression(o => {
+            o.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "text/json", "application/json", "application/pdf" });
+        });
     }
 
     /// <summary>

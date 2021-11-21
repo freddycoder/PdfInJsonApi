@@ -24,7 +24,7 @@ namespace PdfInJsonApi.MapperConfiguration
                 .ForMember(d => d.Name, o => o.MapFrom(s => s.Name))
                 .ForMember(d => d.DateAjout, o => o.MapFrom(s => s.Created));
 
-            CreateMap<PdfListModel, PdfDbModel>()
+            CreateMap<PdfMetadataModel, PdfDbModel>()
                 .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
                 .ForMember(d => d.Name, o => o.MapFrom(s => s.Name))
                 .ForMember(d => d.Created, o => o.MapFrom(s => s.DateAjout))

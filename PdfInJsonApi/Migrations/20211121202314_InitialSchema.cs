@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PdfInJsonApi.Migrations
 {
     /// <summary>
-    /// ProjectSchema
+    /// InitialSchema
     /// </summary>
-    public partial class ProjectSchema : Migration
+    public partial class InitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,7 @@ namespace PdfInJsonApi.Migrations
                     Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
                     Created = table.Column<DateTimeOffset>(type: "TIMESTAMP(7) WITH TIME ZONE", nullable: false),
-                    Content = table.Column<byte[]>(type: "BLOB", maxLength: 2147483647, nullable: true)
+                    Content = table.Column<byte[]>(type: "BLOB", maxLength: 100000000, nullable: true)
                 },
                 constraints: table =>
                 {

@@ -25,6 +25,11 @@ public class PdfDbModel
     /// <summary>
     /// The pdf content
     /// </summary>
-    [MaxLength(int.MaxValue)]
+    [MaxLength(MaxContentLength)]
     public byte[]? Content { get; set; }
+
+    /// <summary>
+    /// The length of the pdf content
+    /// </summary>
+    public const int MaxContentLength = 100_000_000;
 }

@@ -11,6 +11,7 @@ namespace PdfInJsonApi.Migrations
     [DbContext(typeof(PdfContext))]
     partial class PdfContextModelSnapshot : ModelSnapshot
     {
+        /// <inheritdoc />
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -26,7 +27,7 @@ namespace PdfInJsonApi.Migrations
                         .HasColumnType("RAW(16)");
 
                     b.Property<byte[]>("Content")
-                        .HasMaxLength(2147483647)
+                        .HasMaxLength(100000000)
                         .HasColumnType("BLOB");
 
                     b.Property<DateTimeOffset>("Created")

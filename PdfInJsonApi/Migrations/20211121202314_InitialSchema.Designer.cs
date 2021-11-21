@@ -10,12 +10,10 @@ using PdfInJsonApi.Data;
 namespace PdfInJsonApi.Migrations
 {
     [DbContext(typeof(PdfContext))]
-    [Migration("20211121145450_ProjectSchema")]
-    partial class ProjectSchema
+    [Migration("20211121202314_InitialSchema")]
+    partial class InitialSchema
     {
-        /// <summary>
-        /// Builds the target model for the migration.
-        /// </summary>
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -31,7 +29,7 @@ namespace PdfInJsonApi.Migrations
                         .HasColumnType("RAW(16)");
 
                     b.Property<byte[]>("Content")
-                        .HasMaxLength(2147483647)
+                        .HasMaxLength(100000000)
                         .HasColumnType("BLOB");
 
                     b.Property<DateTimeOffset>("Created")

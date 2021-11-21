@@ -1,6 +1,6 @@
 namespace PdfInJsonApi;
 
-class PdfListModel 
+class PdfMetadataModel 
 {
     /// <summary>
     /// The primary key for the Pdf entity.

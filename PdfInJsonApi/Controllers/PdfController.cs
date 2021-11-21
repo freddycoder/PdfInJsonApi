@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
@@ -44,15 +45,24 @@ public class PdfController : ControllerBase
     /// Get all Pdfs without their content
     /// </summary>
     [HttpGet]
-    [ProducesResponseType(typeof(PdfListModel), 200)]
+    [ProducesResponseType(typeof(PdfMetadataModel), 200)]
     public async Task<IActionResult> Get(CancellationToken cancellationToken, [Range(0, int.MaxValue)] int page = 0, [Range(1, 100)] int pageSize = 20)
     {
-        return Ok(await Context.Pdfs.AsNoTracking()
+        var count = await Context.Pdfs.CountAsync(cancellationToken);
+
+        var pdfs = await Context.Pdfs.AsNoTracking()
                                     .OrderBy(p => p.Id)
                                     .Skip(page * pageSize)
                                     .Take(pageSize)
-                                    .ProjectTo<PdfListModel>(Mapper.ConfigurationProvider)
-                                    .ToListAsync(cancellationToken));
+                                    .ProjectTo<PdfMetadataModel>(Mapper.ConfigurationProvider)
+                                    .ToListAsync(cancellationToken);
+
+        var paginationHeaders = new PaginationHeaders(count, page, pdfs.Count);
+
+        // Add pagination headers
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationHeaders));
+
+        return Ok(pdfs);
     }
 
     /// <summary>
@@ -74,13 +84,49 @@ public class PdfController : ControllerBase
     }
 
     /// <summary>
+    /// Get pdf metadata
+    /// </summary>
+    [HttpGet("{id}/metadata", Name = "PdfMetadata")]
+    [ProducesResponseType(typeof(PdfMetadataModel), 200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetMetadata(Guid id, CancellationToken cancellationToken)
+    {
+        var item = await Context.Pdfs.FindAsync(new object [] { id }, cancellationToken);
+        
+        if (item == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(Mapper.Map<PdfMetadataModel>(item));
+    }
+
+    /// <summary>
+    /// Get de pdf as byte stream
+    /// </summary>
+    [HttpGet("{id}/stream", Name = "PdfStream")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetStream(Guid id, CancellationToken cancellationToken)
+    {
+        var item = await Context.Pdfs.FindAsync(new object [] { id }, cancellationToken);
+        
+        if (item == null)
+        {
+            return NotFound();
+        }
+
+        return File(item.Content ?? Array.Empty<byte>(), "application/pdf");
+    }
+
+    /// <summary>
     /// Create a new Pdf
     /// </summary>
     /// <response code="201">Returns the newly created item</response>
     /// <response code="400">If the item is null</response>
     /// <response code="400">If the base64 content is not valid</response>
     [HttpPost]
-    [ProducesResponseType(typeof(PdfListModel), 201)]
+    [ProducesResponseType(typeof(PdfMetadataModel), 201)]
     [ProducesResponseType(400)]
     [RequestSizeLimit(int.MaxValue)]
     public async Task<IActionResult> Post([FromBody] PdfModel item, CancellationToken cancellationToken)
@@ -101,6 +147,6 @@ public class PdfController : ControllerBase
 
         await Context.SaveChangesAsync(cancellationToken);
 
-        return CreatedAtRoute("Pdf", new { id = entity.Entity.Id }, Mapper.Map<PdfListModel>(entity.Entity));
+        return CreatedAtRoute("Pdf", new { id = entity.Entity.Id }, Mapper.Map<PdfMetadataModel>(entity.Entity));
     }
 }
